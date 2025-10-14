@@ -7,17 +7,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import com.example.composenavigationapp.ui.theme.ComposeNavigationAppTheme
+import androidx.navigation.compose.rememberNavController
+import com.example.composenavigationapp.ui.navigation.RootNavGraph
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
             ComposeNavigationAppTheme {
-                Text(
-                    text = "Hello Compose Navigation",
-                    style = MaterialTheme.typography.headlineSmall
-                )
+                val navController = rememberNavController()
+                RootNavGraph(navController = navController)
             }
         }
     }
