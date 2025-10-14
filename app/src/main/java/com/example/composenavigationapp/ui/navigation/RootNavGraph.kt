@@ -28,14 +28,11 @@ fun RootNavGraph(
                 }
             )
         }
-        // 2) Main graph (akan diisi pada langkah berikut)
-        navigation(
-            startDestination = Routes.HOME,
-            route = Routes.MAIN_GRAPH
-        ) {
-            // Untuk sementara, definisikan minimal satu layar agar bisa dicoba
-            composable(Routes.HOME) { PlaceholderHomeScreen() }
-            // Nanti di Langkah 3+ kita tambah: DETAIL, PROFILE, SETTINGS, ADD
+
+        // Ganti: sebelumnya 'navigation(route = MAIN_GRAPH) { ... }'
+        // Sekarang: satu composable yang menampilkan MainScaffold
+        composable(Routes.MAIN_GRAPH) {
+            MainScaffold() // kita buat di langkah 3.2
         }
     }
 }
