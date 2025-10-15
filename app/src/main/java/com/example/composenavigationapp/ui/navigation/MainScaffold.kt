@@ -5,40 +5,35 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
-import kotlinx.coroutines.launch
-import com.example.composenavigationapp.ui.screens.HomeScreen
+import com.example.composenavigationapp.ui.screens.AboutScreen
+import com.example.composenavigationapp.ui.screens.AddScreen
 import com.example.composenavigationapp.ui.screens.DetailScreen
+import com.example.composenavigationapp.ui.screens.HomeScreen
 import com.example.composenavigationapp.ui.screens.ProfileScreen
 import com.example.composenavigationapp.ui.screens.SettingsScreen
-import com.example.composenavigationapp.ui.screens.AddScreen
+import kotlinx.coroutines.launch
 
-// --- BottomNav items ---
-sealed class BottomItem(
-    val route: String,
-    val label: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
-) {
+
+sealed class BottomItem(val route: String, val label: String, val icon: ImageVector) {
     data object Home : BottomItem(Routes.HOME, "Home", Icons.Filled.Home)
     data object Profile : BottomItem(Routes.PROFILE, "Profile", Icons.Filled.Person)
     data object Settings : BottomItem(Routes.SETTINGS, "Settings", Icons.Filled.Settings)
 }
 
-private val bottomItems = listOf(
-    BottomItem.Home,
-    BottomItem.Profile,
-    BottomItem.Settings
-)
+private val bottomItems = listOf(BottomItem.Home, BottomItem.Profile, BottomItem.Settings)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,12 +47,8 @@ fun MainScaffold() {
         drawerContent = {
             AppDrawer(
                 onNavigate = { route ->
-                    // Navigasi via Drawer
                     navController.navigate(route) {
-                        // popUpTo start agar tidak numpuk
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }
@@ -74,26 +65,19 @@ fun MainScaffold() {
                         Text(current ?: "Compose App")
                     },
                     navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch { drawerState.open() }
-                        }) {
-                            Icon(Icons.Filled.Home, contentDescription = "Menu") // ikon bebas
+                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                            Icon(Icons.Filled.Menu, contentDescription = "Menu")
                         }
                     }
                 )
             },
-            bottomBar = {
-                BottomNavBar(navController)
-            },
+            bottomBar = { BottomNavBar(navController) },
             floatingActionButton = {
-                FloatingActionButton(
-                    onClick = {
-                        // FAB menuju layar ADD
-                        navController.navigate(Routes.ADD) {
-                            launchSingleTop = true
-                        }
+                FloatingActionButton(onClick = {
+                    navController.navigate(Routes.ADD) {
+                        launchSingleTop = true
                     }
-                ) {
+                }) {
                     Icon(Icons.Filled.Add, contentDescription = "Add")
                 }
             }
@@ -109,7 +93,6 @@ fun MainScaffold() {
 private fun BottomNavBar(navController: NavHostController) {
     val backStack by navController.currentBackStackEntryAsState()
     val dest = backStack?.destination
-
     NavigationBar {
         bottomItems.forEach { item ->
             val selected = isTopLevelDestination(dest, item.route)
@@ -117,9 +100,7 @@ private fun BottomNavBar(navController: NavHostController) {
                 selected = selected,
                 onClick = {
                     navController.navigate(item.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
+                        popUpTo(navController.graph.findStartDestination().id) { saveState = true }
                         launchSingleTop = true
                         restoreState = true
                     }
@@ -160,6 +141,12 @@ private fun AppDrawer(onNavigate: (String) -> Unit) {
             selected = false,
             onClick = { onNavigate(Routes.SETTINGS) }
         )
+        Divider(modifier = Modifier.padding(vertical = 8.dp))
+        NavigationDrawerItem(
+            label = { Text("Tentang") },
+            selected = false,
+            onClick = { onNavigate(Routes.ABOUT) }
+        )
     }
 }
 
@@ -174,5 +161,7 @@ private fun MainNavHost(navController: NavHostController) {
         composable(Routes.PROFILE) { ProfileScreen() }
         composable(Routes.SETTINGS) { SettingsScreen() }
         composable(Routes.ADD) { AddScreen(navController) }
+        composable(Routes.ABOUT) { AboutScreen() }
     }
 }
+
