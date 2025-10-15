@@ -7,6 +7,8 @@ object Routes {
     const val PROFILE = "profile"
     const val SETTINGS = "settings"
     const val ADD = "add"
+
+    const val WEATHER = "weather"
     const val MAIN_GRAPH = "main_graph"
     const val ABOUT = "about"
 }
