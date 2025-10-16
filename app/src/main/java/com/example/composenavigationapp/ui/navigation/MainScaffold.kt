@@ -15,6 +15,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.example.composenavigationapp.ui.screens.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.composenavigationapp.ui.viewmodel.ItemsViewModel
 import kotlinx.coroutines.launch // <-- PASTIKAN IMPORT INI ADA
 
 sealed class BottomItem(val route: String, val label: String, val icon: ImageVector) {
@@ -37,6 +39,7 @@ fun MainScaffold() {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+    val itemsViewModel: ItemsViewModel = viewModel()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -81,7 +84,7 @@ fun MainScaffold() {
             }
         ) { padding ->
             Box(Modifier.padding(padding)) {
-                MainNavHost(navController)
+                MainNavHost(navController, itemsViewModel)
             }
         }
     }
@@ -149,9 +152,9 @@ private fun AppDrawer(onNavigate: (String) -> Unit) {
 }
 
 @Composable
-private fun MainNavHost(navController: NavHostController) {
+private fun MainNavHost(navController: NavHostController, itemsViewModel: ItemsViewModel) {
     NavHost(navController, startDestination = Routes.HOME) {
-        composable(Routes.HOME) { HomeScreen(navController) }
+        composable(Routes.HOME) { HomeScreen(navController, itemsViewModel) }
         composable("${Routes.DETAIL}/{id}") { backStack ->
             val id = backStack.arguments?.getString("id")
             DetailScreen(navController, id)
@@ -159,7 +162,7 @@ private fun MainNavHost(navController: NavHostController) {
         composable(Routes.PROFILE) { ProfileScreen() }
         composable(Routes.SETTINGS) { SettingsScreen() }
         composable(Routes.ABOUT) { AboutScreen() }
-        composable(Routes.ADD) { AddScreen(navController) }
+        composable(Routes.ADD) { AddScreen(navController, itemsViewModel) }
         composable(Routes.WEATHER) { WeatherScreen() }
     }
 }
